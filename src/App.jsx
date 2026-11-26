@@ -25,7 +25,7 @@ import {
   Award,
 } from "lucide-react";
 
-// ضع هنا رابط قاعدة البيانات الذي نسخته من Firebase Realtime Database (بدون / في النهاية)
+// رابط قاعدة البيانات في Firebase Realtime Database (بدون / في النهاية)
 const FIREBASE_DB_URL =
   "https://innovo-school-league-default-rtdb.europe-west1.firebasedatabase.app";
 
@@ -115,13 +115,13 @@ const INITIAL_TEAMS = [
     name: "Team 4",
     color: "#db2777",
     logo: "",
-    captain: "أحمد جمعة سيد أمين",
+    captain: "مارك ملاك إدوار عزيز",
     players: [
       "أحمد محمد أحمد عبد التواب",
-      "أحمد جمعة سيد أمين (C)",
+      "آدم إبراهيم أبو بكر ياسين",
       "مصطفى إبراهيم محمد أبو كاشف",
       "عبد الرحمن عزت عودة متولي",
-      "مارك ملاك إدوار عزيز",
+      "مارك ملاك إدوار عزيز (C)",
     ],
   },
   {
@@ -130,13 +130,13 @@ const INITIAL_TEAMS = [
     name: "Team 6",
     color: "#dc2626",
     logo: "",
-    captain: "مارك ملاك إدوار عزيز",
+    captain: "أحمد جمعة سيد أمين",
     players: [
       "محمد أحمد محمد برعي",
-      "آدم إبراهيم أبو بكر ياسين",
+      "أحمد جمعة سيد أمين (C)",
+      "مهند أحمد عبد الحميد عبد الحميد",
       "ياسين محمد أحمد علي",
       "خالد محمد أحمد حسين",
-      "مارك ملاك إدوار عزيز (C)",
     ],
   },
   {
@@ -150,7 +150,6 @@ const INITIAL_TEAMS = [
       "د. ريمون أرمنيوس",
       "م. عبد الرحمن سعد",
       "م. كرلس شوقي",
-      "مهند أحمد عبد الحميد عبد الحميد",
       "ك. عمر عبد الرحمن",
       "عبد الله حسين هاشم (C)",
     ],
@@ -1253,7 +1252,6 @@ export default function App() {
                           </div>
                         </div>
 
-                        {/* قسم تسجيل مسجلي الأهداف */}
                         <div className="rounded-xl border border-slate-200 bg-white p-3.5 space-y-3">
                           <div className="flex items-center justify-between">
                             <span className="text-xs font-extrabold text-slate-800">
