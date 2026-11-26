@@ -23,7 +23,7 @@ import {
 } from "lucide-react";
 
 // ضع هنا رابط قاعدة البيانات الذي نسخته من Firebase Realtime Database (بدون / في النهاية)
-const FIREBASE_DB_URL = "https://YOUR-PROJECT-ID-default-rtdb.firebaseio.com";
+const FIREBASE_DB_URL = "https://innovo-school-league-default-rtdb.europe-west1.firebasedatabase.app";
 
 const INITIAL_ADMIN = {
   email: "admin@innovo.edu.eg",
