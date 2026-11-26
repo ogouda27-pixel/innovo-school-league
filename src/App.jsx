@@ -25,7 +25,6 @@ import {
   Award,
 } from "lucide-react";
 
-// رابط قاعدة البيانات في Firebase Realtime Database (بدون / في النهاية)
 const FIREBASE_DB_URL =
   "https://innovo-school-league-default-rtdb.europe-west1.firebasedatabase.app";
 
@@ -229,6 +228,7 @@ export default function App() {
   const [matchDraft, setMatchDraft] = useState(null);
   const [scorerTeamId, setScorerTeamId] = useState("");
   const [scorerPlayerName, setScorerPlayerName] = useState("");
+  const [newPlayerDrafts, setNewPlayerDrafts] = useState({});
   const [toastMsg, setToastMsg] = useState("");
   const [cloudStatus, setCloudStatus] = useState(
     isCloudConfigured() ? "connected" : "local"
@@ -1781,6 +1781,113 @@ export default function App() {
                           }
                         />
                       </label>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <h2 className="text-base font-extrabold text-slate-900">
+                تعديل قوائم لاعبي الفرق
+              </h2>
+              <p className="mt-1 text-xs text-slate-500">
+                عدّل اسم أي لاعب، أضف لاعباً جديداً، أو احذف لاعباً — يتم الحفظ والمزامنة تلقائياً.
+              </p>
+
+              <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+                {teams.map((team) => (
+                  <div
+                    key={team.id}
+                    className="rounded-xl border border-slate-200 bg-slate-50/60 p-3.5 space-y-2.5"
+                  >
+                    <div className="flex items-center justify-between border-b border-slate-200/80 pb-2">
+                      <span className="font-extrabold text-sm text-slate-900">
+                        {team.name} (Group {team.group})
+                      </span>
+                      <span className="text-xs font-semibold text-slate-500">
+                        {team.players.length} لاعبين
+                      </span>
+                    </div>
+
+                    <div className="space-y-2">
+                      {team.players.map((playerName, pIdx) => (
+                        <div key={pIdx} className="flex items-center gap-1.5">
+                          <span className="w-6 text-center text-xs font-bold text-slate-400">
+                            {pIdx + 1}
+                          </span>
+                          <input
+                            type="text"
+                            value={playerName}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              const updated = teams.map((t) => {
+                                if (t.id !== team.id) return t;
+                                const nextPlayers = [...t.players];
+                                nextPlayers[pIdx] = val;
+                                return { ...t, players: nextPlayers };
+                              });
+                              setTeams(updated);
+                              syncToCloud(updated, matches, leagueLogo);
+                            }}
+                            className="flex-1 rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-800"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const updated = teams.map((t) => {
+                                if (t.id !== team.id) return t;
+                                return {
+                                  ...t,
+                                  players: t.players.filter((_, idx) => idx !== pIdx),
+                                };
+                              });
+                              setTeams(updated);
+                              syncToCloud(updated, matches, leagueLogo);
+                              showToast("تم حذف اللاعب");
+                            }}
+                            className="rounded-lg p-1.5 text-rose-600 hover:bg-rose-50"
+                            title="حذف اللاعب"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="flex items-center gap-2 pt-1">
+                      <input
+                        type="text"
+                        value={newPlayerDrafts[team.id] || ""}
+                        onChange={(e) =>
+                          setNewPlayerDrafts({
+                            ...newPlayerDrafts,
+                            [team.id]: e.target.value,
+                          })
+                        }
+                        placeholder="اسم لاعب جديد..."
+                        className="flex-1 rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 text-xs"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const nameToAdd = (newPlayerDrafts[team.id] || "").trim();
+                          if (!nameToAdd) return;
+                          const updated = teams.map((t) =>
+                            t.id === team.id
+                              ? { ...t, players: [...t.players, nameToAdd] }
+                              : t
+                          );
+                          setTeams(updated);
+                          syncToCloud(updated, matches, leagueLogo);
+                          setNewPlayerDrafts({ ...newPlayerDrafts, [team.id]: "" });
+                          showToast("تمت إضافة اللاعب للفريق");
+                        }}
+                        className="inline-flex items-center gap-1 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-emerald-700"
+                      >
+                        <Plus className="h-3.5 w-3.5" />
+                        <span>إضافة</span>
+                      </button>
                     </div>
                   </div>
                 ))}
