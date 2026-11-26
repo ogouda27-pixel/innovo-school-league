@@ -6,7 +6,6 @@ import {
   Shield,
   Lock,
   Unlock,
-  Plus,
   Edit3,
   Check,
   X,
@@ -14,14 +13,17 @@ import {
   Download,
   Upload,
   AlertTriangle,
-  Award,
   Clock,
   Filter,
   Image as ImageIcon,
   RotateCcw,
   LogOut,
   CheckCircle2,
+  Cloud,
 } from "lucide-react";
+
+// ضع هنا رابط قاعدة البيانات الذي نسخته من Firebase Realtime Database (بدون / في النهاية)
+const FIREBASE_DB_URL = "https://YOUR-PROJECT-ID-default-rtdb.firebaseio.com";
 
 const INITIAL_ADMIN = {
   email: "admin@innovo.edu.eg",
@@ -170,6 +172,9 @@ const INITIAL_MATCHES = [
   { id: 16, stage: "المباراة النهائية", group: "KO", date: "الخميس 31 ديسمبر 2026", time: "10:30 - 10:55 ص", homeId: null, awayId: null, homeLabel: "فائز نصف النهائي 1", awayLabel: "فائز نصف النهائي 2", homeScore: null, awayScore: null, status: "upcoming", homeYellow: 0, awayYellow: 0, homeRed: 0, awayRed: 0, note: "" },
 ];
 
+const isCloudConfigured = () =>
+  FIREBASE_DB_URL && !FIREBASE_DB_URL.includes("YOUR-PROJECT-ID");
+
 export default function App() {
   const [teams, setTeams] = useState(() => {
     try {
@@ -218,10 +223,19 @@ export default function App() {
   const [editingMatchId, setEditingMatchId] = useState(null);
   const [matchDraft, setMatchDraft] = useState(null);
   const [toastMsg, setToastMsg] = useState("");
+  const [cloudStatus, setCloudStatus] = useState(
+    isCloudConfigured() ? "connected" : "local"
+  );
 
   const [newEmail, setNewEmail] = useState(adminCreds.email);
   const [newPassword, setNewPassword] = useState(adminCreds.password);
 
+  const showToast = (msg) => {
+    setToastMsg(msg);
+    setTimeout(() => setToastMsg(""), 3000);
+  };
+
+  // حفظ نسخة محلية دائماً
   useEffect(() => {
     try {
       localStorage.setItem("innovo_2026_teams", JSON.stringify(teams));
@@ -246,9 +260,56 @@ export default function App() {
     } catch {}
   }, [adminCreds]);
 
-  const showToast = (msg) => {
-    setToastMsg(msg);
-    setTimeout(() => setToastMsg(""), 3000);
+  // قراءة التحديثات من Firebase لكل الأجهزة والموبايلات بشكل دوري
+  useEffect(() => {
+    if (!isCloudConfigured()) return;
+
+    let active = true;
+    const pullFromCloud = async () => {
+      try {
+        const res = await fetch(`${FIREBASE_DB_URL}/leagueData.json`);
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!active || !data) return;
+
+        // لا نطغى على تعديلات المشرف أثناء التحرير المباشر
+        if (!isAdmin) {
+          if (Array.isArray(data.teams)) setTeams(data.teams);
+          if (Array.isArray(data.matches)) setMatches(data.matches);
+          if (typeof data.leagueLogo === "string") setLeagueLogo(data.leagueLogo);
+        }
+        setCloudStatus("connected");
+      } catch {
+        if (active) setCloudStatus("local");
+      }
+    };
+
+    pullFromCloud();
+    const interval = setInterval(pullFromCloud, 5000);
+    return () => {
+      active = false;
+      clearInterval(interval);
+    };
+  }, [isAdmin]);
+
+  // رفع البيانات إلى Firebase عند قيام المشرف بالتعديل
+  const syncToCloud = async (nextTeams, nextMatches, nextLogo) => {
+    if (!isCloudConfigured()) return;
+    try {
+      await fetch(`${FIREBASE_DB_URL}/leagueData.json`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          teams: nextTeams,
+          matches: nextMatches,
+          leagueLogo: nextLogo,
+          updatedAt: Date.now(),
+        }),
+      });
+      setCloudStatus("connected");
+    } catch {
+      setCloudStatus("local");
+    }
   };
 
   const handleLogin = (e) => {
@@ -433,30 +494,30 @@ export default function App() {
 
   const saveMatchEdit = (id) => {
     if (!isAdmin || !matchDraft) return;
-    setMatches((prev) =>
-      prev.map((m) =>
-        m.id === id
-          ? {
-              ...m,
-              homeId: matchDraft.homeId || null,
-              awayId: matchDraft.awayId || null,
-              homeScore:
-                matchDraft.homeScore === "" ? null : Number(matchDraft.homeScore),
-              awayScore:
-                matchDraft.awayScore === "" ? null : Number(matchDraft.awayScore),
-              status: matchDraft.status,
-              homeYellow: Number(matchDraft.homeYellow || 0),
-              awayYellow: Number(matchDraft.awayYellow || 0),
-              homeRed: Number(matchDraft.homeRed || 0),
-              awayRed: Number(matchDraft.awayRed || 0),
-              note: matchDraft.note,
-            }
-          : m
-      )
+    const nextMatches = matches.map((m) =>
+      m.id === id
+        ? {
+            ...m,
+            homeId: matchDraft.homeId || null,
+            awayId: matchDraft.awayId || null,
+            homeScore:
+              matchDraft.homeScore === "" ? null : Number(matchDraft.homeScore),
+            awayScore:
+              matchDraft.awayScore === "" ? null : Number(matchDraft.awayScore),
+            status: matchDraft.status,
+            homeYellow: Number(matchDraft.homeYellow || 0),
+            awayYellow: Number(matchDraft.awayYellow || 0),
+            homeRed: Number(matchDraft.homeRed || 0),
+            awayRed: Number(matchDraft.awayRed || 0),
+            note: matchDraft.note,
+          }
+        : m
     );
+    setMatches(nextMatches);
+    syncToCloud(teams, nextMatches, leagueLogo);
     setEditingMatchId(null);
     setMatchDraft(null);
-    showToast("تم حفظ نتيجة المباراة وتحديث الترتيب");
+    showToast("تم حفظ النتيجة ومزامنتها لجميع الطلاب");
   };
 
   const applyWalkover = (winnerSide) => {
@@ -505,10 +566,15 @@ export default function App() {
     reader.onload = () => {
       try {
         const parsed = JSON.parse(String(reader.result));
-        if (Array.isArray(parsed.teams)) setTeams(parsed.teams);
-        if (Array.isArray(parsed.matches)) setMatches(parsed.matches);
-        if (typeof parsed.leagueLogo === "string") setLeagueLogo(parsed.leagueLogo);
-        showToast("تم استعادة النسخة الاحتياطية بنجاح");
+        const nextTeams = Array.isArray(parsed.teams) ? parsed.teams : teams;
+        const nextMatches = Array.isArray(parsed.matches) ? parsed.matches : matches;
+        const nextLogo =
+          typeof parsed.leagueLogo === "string" ? parsed.leagueLogo : leagueLogo;
+        setTeams(nextTeams);
+        setMatches(nextMatches);
+        setLeagueLogo(nextLogo);
+        syncToCloud(nextTeams, nextMatches, nextLogo);
+        showToast("تم استعادة النسخة الاحتياطية ومزامنتها");
       } catch {
         showToast("ملف النسخة الاحتياطية غير صالح");
       }
@@ -526,6 +592,7 @@ export default function App() {
       setTeams(INITIAL_TEAMS);
       setMatches(INITIAL_MATCHES);
       setLeagueLogo("");
+      syncToCloud(INITIAL_TEAMS, INITIAL_MATCHES, "");
       showToast("تمت إعادة الضبط للوضع الافتراضي");
     }
   };
@@ -702,18 +769,33 @@ export default function App() {
               )}
             </nav>
 
-            <div className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold border bg-slate-50 border-slate-200 text-slate-600">
-              {isAdmin ? (
-                <>
-                  <Unlock className="h-3.5 w-3.5 text-emerald-600" />
-                  <span className="text-emerald-700">وضع المشرف: صلاحية التعديل مفعّلة</span>
-                </>
-              ) : (
-                <>
-                  <Lock className="h-3.5 w-3.5 text-slate-500" />
-                  <span>وضع المتابعة للطلاب (للقراءة فقط)</span>
-                </>
-              )}
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold border bg-slate-50 border-slate-200 text-slate-600">
+                <Cloud
+                  className={`h-3.5 w-3.5 ${
+                    cloudStatus === "connected" ? "text-emerald-600" : "text-amber-500"
+                  }`}
+                />
+                <span>
+                  {cloudStatus === "connected"
+                    ? "مزامنة سحابية حية"
+                    : "تخزين محلي"}
+                </span>
+              </div>
+
+              <div className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold border bg-slate-50 border-slate-200 text-slate-600">
+                {isAdmin ? (
+                  <>
+                    <Unlock className="h-3.5 w-3.5 text-emerald-600" />
+                    <span className="text-emerald-700">وضع المشرف: التعديل مفعّل</span>
+                  </>
+                ) : (
+                  <>
+                    <Lock className="h-3.5 w-3.5 text-slate-500" />
+                    <span>وضع المتابعة للطلاب (للقراءة فقط)</span>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -1202,7 +1284,7 @@ export default function App() {
           <div className="space-y-6">
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
               <h2 className="text-base font-extrabold text-slate-900">
-                شعار البطولة والنسخ الاحتياطي
+                شعار البطولة والمزامنة والنسخ الاحتياطي
               </h2>
               <div className="mt-4 flex flex-wrap items-center gap-4">
                 <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-slate-300 bg-slate-50 px-4 py-2 text-xs font-bold text-slate-800 hover:bg-slate-100">
@@ -1212,18 +1294,37 @@ export default function App() {
                     type="file"
                     accept="image/*"
                     className="hidden"
-                    onChange={(e) => handleImageUpload(e, setLeagueLogo)}
+                    onChange={(e) =>
+                      handleImageUpload(e, (imgData) => {
+                        setLeagueLogo(imgData);
+                        syncToCloud(teams, matches, imgData);
+                      })
+                    }
                   />
                 </label>
 
                 {leagueLogo && (
                   <button
-                    onClick={() => setLeagueLogo("")}
+                    onClick={() => {
+                      setLeagueLogo("");
+                      syncToCloud(teams, matches, "");
+                    }}
                     className="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-bold text-rose-700 hover:bg-rose-100"
                   >
                     إزالة الشعار
                   </button>
                 )}
+
+                <button
+                  onClick={() => {
+                    syncToCloud(teams, matches, leagueLogo);
+                    showToast("تمت مزامنة كل البيانات مع السحابة الآن");
+                  }}
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2 text-xs font-bold text-white hover:bg-blue-700"
+                >
+                  <Cloud className="h-4 w-4" />
+                  <span>مزامنة فورية الآن</span>
+                </button>
 
                 <button
                   onClick={exportBackup}
@@ -1282,13 +1383,13 @@ export default function App() {
                       <input
                         type="text"
                         value={team.name}
-                        onChange={(e) =>
-                          setTeams((prev) =>
-                            prev.map((t) =>
-                              t.id === team.id ? { ...t, name: e.target.value } : t
-                            )
-                          )
-                        }
+                        onChange={(e) => {
+                          const updated = teams.map((t) =>
+                            t.id === team.id ? { ...t, name: e.target.value } : t
+                          );
+                          setTeams(updated);
+                          syncToCloud(updated, matches, leagueLogo);
+                        }}
                         className="w-full rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-bold"
                       />
                     </div>
@@ -1297,13 +1398,13 @@ export default function App() {
                       <input
                         type="color"
                         value={team.color}
-                        onChange={(e) =>
-                          setTeams((prev) =>
-                            prev.map((t) =>
-                              t.id === team.id ? { ...t, color: e.target.value } : t
-                            )
-                          )
-                        }
+                        onChange={(e) => {
+                          const updated = teams.map((t) =>
+                            t.id === team.id ? { ...t, color: e.target.value } : t
+                          );
+                          setTeams(updated);
+                          syncToCloud(updated, matches, leagueLogo);
+                        }}
                         className="h-8 w-8 cursor-pointer rounded border border-slate-300 bg-white"
                         title="لون الفريق"
                       />
@@ -1314,13 +1415,13 @@ export default function App() {
                           accept="image/*"
                           className="hidden"
                           onChange={(e) =>
-                            handleImageUpload(e, (imgData) =>
-                              setTeams((prev) =>
-                                prev.map((t) =>
-                                  t.id === team.id ? { ...t, logo: imgData } : t
-                                )
-                              )
-                            )
+                            handleImageUpload(e, (imgData) => {
+                              const updated = teams.map((t) =>
+                                t.id === team.id ? { ...t, logo: imgData } : t
+                              );
+                              setTeams(updated);
+                              syncToCloud(updated, matches, leagueLogo);
+                            })
                           }
                         />
                       </label>
@@ -1368,7 +1469,7 @@ export default function App() {
       </main>
 
       {showLoginModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4">
           <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
