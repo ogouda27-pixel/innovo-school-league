@@ -20,10 +20,14 @@ import {
   LogOut,
   CheckCircle2,
   Cloud,
+  Plus,
+  Trash2,
+  Award,
 } from "lucide-react";
 
 // ضع هنا رابط قاعدة البيانات الذي نسخته من Firebase Realtime Database (بدون / في النهاية)
-const FIREBASE_DB_URL = "https://innovo-school-league-default-rtdb.europe-west1.firebasedatabase.app";
+const FIREBASE_DB_URL =
+  "https://innovo-school-league-default-rtdb.europe-west1.firebasedatabase.app";
 
 const INITIAL_ADMIN = {
   email: "admin@innovo.edu.eg",
@@ -154,23 +158,25 @@ const INITIAL_TEAMS = [
 ];
 
 const INITIAL_MATCHES = [
-  { id: 1, stage: "Group A - الجولة 1", group: "A", date: "الخميس 26 نوفمبر 2026", time: "10:30 - 10:55 ص", homeId: "T1", awayId: "T3", homeScore: null, awayScore: null, status: "upcoming", homeYellow: 0, awayYellow: 0, homeRed: 0, awayRed: 0, note: "" },
-  { id: 2, stage: "Group A - الجولة 1", group: "A", date: "الأحد 29 نوفمبر 2026", time: "10:30 - 10:55 ص", homeId: "T5", awayId: "T7", homeScore: null, awayScore: null, status: "upcoming", homeYellow: 0, awayYellow: 0, homeRed: 0, awayRed: 0, note: "" },
-  { id: 3, stage: "Group B - الجولة 1", group: "B", date: "الثلاثاء 1 ديسمبر 2026", time: "10:30 - 10:55 ص", homeId: "T2", awayId: "T4", homeScore: null, awayScore: null, status: "upcoming", homeYellow: 0, awayYellow: 0, homeRed: 0, awayRed: 0, note: "" },
-  { id: 4, stage: "Group B - الجولة 1", group: "B", date: "الخميس 3 ديسمبر 2026", time: "10:30 - 10:55 ص", homeId: "T6", awayId: "T8", homeScore: null, awayScore: null, status: "upcoming", homeYellow: 0, awayYellow: 0, homeRed: 0, awayRed: 0, note: "" },
-  { id: 5, stage: "Group A - الجولة 2", group: "A", date: "الأحد 6 ديسمبر 2026", time: "10:30 - 10:55 ص", homeId: "T1", awayId: "T5", homeScore: null, awayScore: null, status: "upcoming", homeYellow: 0, awayYellow: 0, homeRed: 0, awayRed: 0, note: "" },
-  { id: 6, stage: "Group A - الجولة 2", group: "A", date: "الثلاثاء 8 ديسمبر 2026", time: "10:30 - 10:55 ص", homeId: "T3", awayId: "T7", homeScore: null, awayScore: null, status: "upcoming", homeYellow: 0, awayYellow: 0, homeRed: 0, awayRed: 0, note: "" },
-  { id: 7, stage: "Group B - الجولة 2", group: "B", date: "الخميس 10 ديسمبر 2026", time: "10:30 - 10:55 ص", homeId: "T2", awayId: "T6", homeScore: null, awayScore: null, status: "upcoming", homeYellow: 0, awayYellow: 0, homeRed: 0, awayRed: 0, note: "" },
-  { id: 8, stage: "Group B - الجولة 2", group: "B", date: "الأحد 13 ديسمبر 2026", time: "10:30 - 10:55 ص", homeId: "T4", awayId: "T8", homeScore: null, awayScore: null, status: "upcoming", homeYellow: 0, awayYellow: 0, homeRed: 0, awayRed: 0, note: "" },
-  { id: 9, stage: "Group A - الجولة 3", group: "A", date: "الثلاثاء 15 ديسمبر 2026", time: "10:30 - 10:55 ص", homeId: "T1", awayId: "T7", homeScore: null, awayScore: null, status: "upcoming", homeYellow: 0, awayYellow: 0, homeRed: 0, awayRed: 0, note: "" },
-  { id: 10, stage: "Group A - الجولة 3", group: "A", date: "الخميس 17 ديسمبر 2026", time: "10:30 - 10:55 ص", homeId: "T3", awayId: "T5", homeScore: null, awayScore: null, status: "upcoming", homeYellow: 0, awayYellow: 0, homeRed: 0, awayRed: 0, note: "" },
-  { id: 11, stage: "Group B - الجولة 3", group: "B", date: "الأحد 20 ديسمبر 2026", time: "10:30 - 10:55 ص", homeId: "T2", awayId: "T8", homeScore: null, awayScore: null, status: "upcoming", homeYellow: 0, awayYellow: 0, homeRed: 0, awayRed: 0, note: "" },
-  { id: 12, stage: "Group B - الجولة 3", group: "B", date: "الثلاثاء 22 ديسمبر 2026", time: "10:30 - 10:55 ص", homeId: "T4", awayId: "T6", homeScore: null, awayScore: null, status: "upcoming", homeYellow: 0, awayYellow: 0, homeRed: 0, awayRed: 0, note: "" },
-  { id: 13, stage: "نصف النهائي 1", group: "KO", date: "الخميس 24 ديسمبر 2026", time: "10:30 - 10:55 ص", homeId: null, awayId: null, homeLabel: "أول المجموعة A", awayLabel: "ثاني المجموعة B", homeScore: null, awayScore: null, status: "upcoming", homeYellow: 0, awayYellow: 0, homeRed: 0, awayRed: 0, note: "" },
-  { id: 14, stage: "نصف النهائي 2", group: "KO", date: "الأحد 27 ديسمبر 2026", time: "10:30 - 10:55 ص", homeId: null, awayId: null, homeLabel: "أول المجموعة B", awayLabel: "ثاني المجموعة A", homeScore: null, awayScore: null, status: "upcoming", homeYellow: 0, awayYellow: 0, homeRed: 0, awayRed: 0, note: "" },
-  { id: 15, stage: "تحديد المركز الثالث", group: "KO", date: "الثلاثاء 29 ديسمبر 2026", time: "10:30 - 10:55 ص", homeId: null, awayId: null, homeLabel: "خاسر نصف النهائي 1", awayLabel: "خاسر نصف النهائي 2", homeScore: null, awayScore: null, status: "upcoming", homeYellow: 0, awayYellow: 0, homeRed: 0, awayRed: 0, note: "" },
-  { id: 16, stage: "المباراة النهائية", group: "KO", date: "الخميس 31 ديسمبر 2026", time: "10:30 - 10:55 ص", homeId: null, awayId: null, homeLabel: "فائز نصف النهائي 1", awayLabel: "فائز نصف النهائي 2", homeScore: null, awayScore: null, status: "upcoming", homeYellow: 0, awayYellow: 0, homeRed: 0, awayRed: 0, note: "" },
+  { id: 1, stage: "Group A - الجولة 1", group: "A", date: "الخميس 26 نوفمبر 2026", time: "10:30 - 10:55 ص", homeId: "T1", awayId: "T3", homeScore: null, awayScore: null, status: "upcoming", homeYellow: 0, awayYellow: 0, homeRed: 0, awayRed: 0, scorers: [], note: "" },
+  { id: 2, stage: "Group A - الجولة 1", group: "A", date: "الأحد 29 نوفمبر 2026", time: "10:30 - 10:55 ص", homeId: "T5", awayId: "T7", homeScore: null, awayScore: null, status: "upcoming", homeYellow: 0, awayYellow: 0, homeRed: 0, awayRed: 0, scorers: [], note: "" },
+  { id: 3, stage: "Group B - الجولة 1", group: "B", date: "الثلاثاء 1 ديسمبر 2026", time: "10:30 - 10:55 ص", homeId: "T2", awayId: "T4", homeScore: null, awayScore: null, status: "upcoming", homeYellow: 0, awayYellow: 0, homeRed: 0, awayRed: 0, scorers: [], note: "" },
+  { id: 4, stage: "Group B - الجولة 1", group: "B", date: "الخميس 3 ديسمبر 2026", time: "10:30 - 10:55 ص", homeId: "T6", awayId: "T8", homeScore: null, awayScore: null, status: "upcoming", homeYellow: 0, awayYellow: 0, homeRed: 0, awayRed: 0, scorers: [], note: "" },
+  { id: 5, stage: "Group A - الجولة 2", group: "A", date: "الأحد 6 ديسمبر 2026", time: "10:30 - 10:55 ص", homeId: "T1", awayId: "T5", homeScore: null, awayScore: null, status: "upcoming", homeYellow: 0, awayYellow: 0, homeRed: 0, awayRed: 0, scorers: [], note: "" },
+  { id: 6, stage: "Group A - الجولة 2", group: "A", date: "الثلاثاء 8 ديسمبر 2026", time: "10:30 - 10:55 ص", homeId: "T3", awayId: "T7", homeScore: null, awayScore: null, status: "upcoming", homeYellow: 0, awayYellow: 0, homeRed: 0, awayRed: 0, scorers: [], note: "" },
+  { id: 7, stage: "Group B - الجولة 2", group: "B", date: "الخميس 10 ديسمبر 2026", time: "10:30 - 10:55 ص", homeId: "T2", awayId: "T6", homeScore: null, awayScore: null, status: "upcoming", homeYellow: 0, awayYellow: 0, homeRed: 0, awayRed: 0, scorers: [], note: "" },
+  { id: 8, stage: "Group B - الجولة 2", group: "B", date: "الأحد 13 ديسمبر 2026", time: "10:30 - 10:55 ص", homeId: "T4", awayId: "T8", homeScore: null, awayScore: null, status: "upcoming", homeYellow: 0, awayYellow: 0, homeRed: 0, awayRed: 0, scorers: [], note: "" },
+  { id: 9, stage: "Group A - الجولة 3", group: "A", date: "الثلاثاء 15 ديسمبر 2026", time: "10:30 - 10:55 ص", homeId: "T1", awayId: "T7", homeScore: null, awayScore: null, status: "upcoming", homeYellow: 0, awayYellow: 0, homeRed: 0, awayRed: 0, scorers: [], note: "" },
+  { id: 10, stage: "Group A - الجولة 3", group: "A", date: "الخميس 17 ديسمبر 2026", time: "10:30 - 10:55 ص", homeId: "T3", awayId: "T5", homeScore: null, awayScore: null, status: "upcoming", homeYellow: 0, awayYellow: 0, homeRed: 0, awayRed: 0, scorers: [], note: "" },
+  { id: 11, stage: "Group B - الجولة 3", group: "B", date: "الأحد 20 ديسمبر 2026", time: "10:30 - 10:55 ص", homeId: "T2", awayId: "T8", homeScore: null, awayScore: null, status: "upcoming", homeYellow: 0, awayYellow: 0, homeRed: 0, awayRed: 0, scorers: [], note: "" },
+  { id: 12, stage: "Group B - الجولة 3", group: "B", date: "الثلاثاء 22 ديسمبر 2026", time: "10:30 - 10:55 ص", homeId: "T4", awayId: "T6", homeScore: null, awayScore: null, status: "upcoming", homeYellow: 0, awayYellow: 0, homeRed: 0, awayRed: 0, scorers: [], note: "" },
+  { id: 13, stage: "نصف النهائي 1", group: "KO", date: "الخميس 24 ديسمبر 2026", time: "10:30 - 10:55 ص", homeId: null, awayId: null, homeLabel: "أول المجموعة A", awayLabel: "ثاني المجموعة B", homeScore: null, awayScore: null, status: "upcoming", homeYellow: 0, awayYellow: 0, homeRed: 0, awayRed: 0, scorers: [], note: "" },
+  { id: 14, stage: "نصف النهائي 2", group: "KO", date: "الأحد 27 ديسمبر 2026", time: "10:30 - 10:55 ص", homeId: null, awayId: null, homeLabel: "أول المجموعة B", awayLabel: "ثاني المجموعة A", homeScore: null, awayScore: null, status: "upcoming", homeYellow: 0, awayYellow: 0, homeRed: 0, awayRed: 0, scorers: [], note: "" },
+  { id: 15, stage: "تحديد المركز الثالث", group: "KO", date: "الثلاثاء 29 ديسمبر 2026", time: "10:30 - 10:55 ص", homeId: null, awayId: null, homeLabel: "خاسر نصف النهائي 1", awayLabel: "خاسر نصف النهائي 2", homeScore: null, awayScore: null, status: "upcoming", homeYellow: 0, awayYellow: 0, homeRed: 0, awayRed: 0, scorers: [], note: "" },
+  { id: 16, stage: "المباراة النهائية", group: "KO", date: "الخميس 31 ديسمبر 2026", time: "10:30 - 10:55 ص", homeId: null, awayId: null, homeLabel: "فائز نصف النهائي 1", awayLabel: "فائز نصف النهائي 2", homeScore: null, awayScore: null, status: "upcoming", homeYellow: 0, awayYellow: 0, homeRed: 0, awayRed: 0, scorers: [], note: "" },
 ];
+
+const cleanPlayerName = (name = "") => name.replace(/\s*\(C\)\s*$/i, "").trim();
 
 const isCloudConfigured = () =>
   FIREBASE_DB_URL && !FIREBASE_DB_URL.includes("YOUR-PROJECT-ID");
@@ -222,6 +228,8 @@ export default function App() {
   const [teamFilter, setTeamFilter] = useState("ALL");
   const [editingMatchId, setEditingMatchId] = useState(null);
   const [matchDraft, setMatchDraft] = useState(null);
+  const [scorerTeamId, setScorerTeamId] = useState("");
+  const [scorerPlayerName, setScorerPlayerName] = useState("");
   const [toastMsg, setToastMsg] = useState("");
   const [cloudStatus, setCloudStatus] = useState(
     isCloudConfigured() ? "connected" : "local"
@@ -235,7 +243,6 @@ export default function App() {
     setTimeout(() => setToastMsg(""), 3000);
   };
 
-  // حفظ نسخة محلية دائماً
   useEffect(() => {
     try {
       localStorage.setItem("innovo_2026_teams", JSON.stringify(teams));
@@ -260,7 +267,6 @@ export default function App() {
     } catch {}
   }, [adminCreds]);
 
-  // قراءة التحديثات من Firebase لكل الأجهزة والموبايلات بشكل دوري
   useEffect(() => {
     if (!isCloudConfigured()) return;
 
@@ -272,10 +278,16 @@ export default function App() {
         const data = await res.json();
         if (!active || !data) return;
 
-        // لا نطغى على تعديلات المشرف أثناء التحرير المباشر
         if (!isAdmin) {
           if (Array.isArray(data.teams)) setTeams(data.teams);
-          if (Array.isArray(data.matches)) setMatches(data.matches);
+          if (Array.isArray(data.matches)) {
+            setMatches(
+              data.matches.map((m) => ({
+                ...m,
+                scorers: Array.isArray(m.scorers) ? m.scorers : [],
+              }))
+            );
+          }
           if (typeof data.leagueLogo === "string") setLeagueLogo(data.leagueLogo);
         }
         setCloudStatus("connected");
@@ -292,7 +304,6 @@ export default function App() {
     };
   }, [isAdmin]);
 
-  // رفع البيانات إلى Firebase عند قيام المشرف بالتعديل
   const syncToCloud = async (nextTeams, nextMatches, nextLogo) => {
     if (!isCloudConfigured()) return;
     try {
@@ -475,8 +486,42 @@ export default function App() {
     };
   }, [teams, matches]);
 
+  const topScorers = useMemo(() => {
+    const map = new Map();
+
+    for (const m of matches) {
+      if (!Array.isArray(m.scorers)) continue;
+      for (const sc of m.scorers) {
+        const cleanName = cleanPlayerName(sc.playerName);
+        if (!cleanName || !sc.teamId) continue;
+        const key = `${sc.teamId}__${cleanName}`;
+        const teamObj = getTeam(sc.teamId);
+        const existing = map.get(key) || {
+          key,
+          playerName: cleanName,
+          teamId: sc.teamId,
+          teamName: teamObj?.name || sc.teamId,
+          teamColor: teamObj?.color || "#1e293b",
+          teamLogo: teamObj?.logo || "",
+          group: teamObj?.group || "",
+          goals: 0,
+        };
+        existing.goals += 1;
+        map.set(key, existing);
+      }
+    }
+
+    return Array.from(map.values()).sort((a, b) => {
+      if (b.goals !== a.goals) return b.goals - a.goals;
+      return a.playerName.localeCompare(b.playerName, "ar");
+    });
+  }, [matches, teams]);
+
   const startEditMatch = (match) => {
     if (!isAdmin) return;
+    const defaultTeam = match.homeId || match.awayId || "";
+    const firstPlayer =
+      cleanPlayerName(getTeam(defaultTeam)?.players?.[0] || "");
     setEditingMatchId(match.id);
     setMatchDraft({
       homeId: match.homeId || "",
@@ -488,7 +533,70 @@ export default function App() {
       awayYellow: match.awayYellow ?? 0,
       homeRed: match.homeRed ?? 0,
       awayRed: match.awayRed ?? 0,
+      scorers: Array.isArray(match.scorers) ? match.scorers : [],
       note: match.note || "",
+    });
+    setScorerTeamId(defaultTeam);
+    setScorerPlayerName(firstPlayer);
+  };
+
+  const handleAddScorer = (adjustScoreAutomatically = true) => {
+    if (!matchDraft || !scorerTeamId || !scorerPlayerName.trim()) return;
+    const cleaned = cleanPlayerName(scorerPlayerName);
+    const newEntry = {
+      id: `${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+      teamId: scorerTeamId,
+      playerName: cleaned,
+    };
+
+    let nextHomeScore = matchDraft.homeScore;
+    let nextAwayScore = matchDraft.awayScore;
+
+    if (adjustScoreAutomatically) {
+      if (scorerTeamId === matchDraft.homeId) {
+        nextHomeScore = Number(matchDraft.homeScore || 0) + 1;
+      } else if (scorerTeamId === matchDraft.awayId) {
+        nextAwayScore = Number(matchDraft.awayScore || 0) + 1;
+      }
+    }
+
+    setMatchDraft({
+      ...matchDraft,
+      homeScore: nextHomeScore,
+      awayScore: nextAwayScore,
+      scorers: [...(matchDraft.scorers || []), newEntry],
+    });
+  };
+
+  const handleRemoveScorer = (scorerId, adjustScoreAutomatically = true) => {
+    if (!matchDraft) return;
+    const target = (matchDraft.scorers || []).find((s) => s.id === scorerId);
+    const remaining = (matchDraft.scorers || []).filter((s) => s.id !== scorerId);
+
+    let nextHomeScore = matchDraft.homeScore;
+    let nextAwayScore = matchDraft.awayScore;
+
+    if (adjustScoreAutomatically && target) {
+      if (
+        target.teamId === matchDraft.homeId &&
+        matchDraft.homeScore !== "" &&
+        Number(matchDraft.homeScore) > 0
+      ) {
+        nextHomeScore = Number(matchDraft.homeScore) - 1;
+      } else if (
+        target.teamId === matchDraft.awayId &&
+        matchDraft.awayScore !== "" &&
+        Number(matchDraft.awayScore) > 0
+      ) {
+        nextAwayScore = Number(matchDraft.awayScore) - 1;
+      }
+    }
+
+    setMatchDraft({
+      ...matchDraft,
+      homeScore: nextHomeScore,
+      awayScore: nextAwayScore,
+      scorers: remaining,
     });
   };
 
@@ -509,6 +617,7 @@ export default function App() {
             awayYellow: Number(matchDraft.awayYellow || 0),
             homeRed: Number(matchDraft.homeRed || 0),
             awayRed: Number(matchDraft.awayRed || 0),
+            scorers: Array.isArray(matchDraft.scorers) ? matchDraft.scorers : [],
             note: matchDraft.note,
           }
         : m
@@ -517,7 +626,7 @@ export default function App() {
     syncToCloud(teams, nextMatches, leagueLogo);
     setEditingMatchId(null);
     setMatchDraft(null);
-    showToast("تم حفظ النتيجة ومزامنتها لجميع الطلاب");
+    showToast("تم حفظ النتيجة والهدافين ومزامنتها للطلاب");
   };
 
   const applyWalkover = (winnerSide) => {
@@ -538,7 +647,11 @@ export default function App() {
   const filteredMatches = useMemo(() => {
     return matches.filter((m) => {
       if (groupFilter !== "ALL" && m.group !== groupFilter) return false;
-      if (teamFilter !== "ALL" && m.homeId !== teamFilter && m.awayId !== teamFilter)
+      if (
+        teamFilter !== "ALL" &&
+        m.homeId !== teamFilter &&
+        m.awayId !== teamFilter
+      )
         return false;
       return true;
     });
@@ -567,7 +680,12 @@ export default function App() {
       try {
         const parsed = JSON.parse(String(reader.result));
         const nextTeams = Array.isArray(parsed.teams) ? parsed.teams : teams;
-        const nextMatches = Array.isArray(parsed.matches) ? parsed.matches : matches;
+        const nextMatches = Array.isArray(parsed.matches)
+          ? parsed.matches.map((m) => ({
+              ...m,
+              scorers: Array.isArray(m.scorers) ? m.scorers : [],
+            }))
+          : matches;
         const nextLogo =
           typeof parsed.leagueLogo === "string" ? parsed.leagueLogo : leagueLogo;
         setTeams(nextTeams);
@@ -586,7 +704,7 @@ export default function App() {
     if (!isAdmin) return;
     if (
       window.confirm(
-        "هل أنت متأكد من إعادة ضبط جميع النتائج والفرق واللوجو إلى الوضع الافتراضي؟"
+        "هل أنت متأكد من إعادة ضبط جميع النتائج والهدافين والفرق واللوجو إلى الوضع الافتراضي؟"
       )
     ) {
       setTeams(INITIAL_TEAMS);
@@ -625,6 +743,22 @@ export default function App() {
       </div>
     );
   };
+
+  const activeDraftTeams = useMemo(() => {
+    if (!matchDraft) return [];
+    const list = [];
+    if (matchDraft.homeId && getTeam(matchDraft.homeId)) {
+      list.push(getTeam(matchDraft.homeId));
+    }
+    if (
+      matchDraft.awayId &&
+      matchDraft.awayId !== matchDraft.homeId &&
+      getTeam(matchDraft.awayId)
+    ) {
+      list.push(getTeam(matchDraft.awayId));
+    }
+    return list.length > 0 ? list : teams;
+  }, [matchDraft, teams]);
 
   return (
     <div dir="rtl" className="min-h-screen bg-slate-50 text-slate-900">
@@ -744,6 +878,17 @@ export default function App() {
                 <span>ترتيب المجموعات</span>
               </button>
               <button
+                onClick={() => setActiveTab("scorers")}
+                className={`inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-bold transition ${
+                  activeTab === "scorers"
+                    ? "bg-blue-600 text-white shadow-sm"
+                    : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                }`}
+              >
+                <Award className="h-4 w-4" />
+                <span>الهدافون</span>
+              </button>
+              <button
                 onClick={() => setActiveTab("teams")}
                 className={`inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-bold transition ${
                   activeTab === "teams"
@@ -773,7 +918,9 @@ export default function App() {
               <div className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold border bg-slate-50 border-slate-200 text-slate-600">
                 <Cloud
                   className={`h-3.5 w-3.5 ${
-                    cloudStatus === "connected" ? "text-emerald-600" : "text-amber-500"
+                    cloudStatus === "connected"
+                      ? "text-emerald-600"
+                      : "text-amber-500"
                   }`}
                 />
                 <span>
@@ -849,6 +996,13 @@ export default function App() {
                 const homeTeam = getTeam(match.homeId);
                 const awayTeam = getTeam(match.awayId);
                 const isEditing = editingMatchId === match.id && isAdmin;
+                const matchScorers = Array.isArray(match.scorers) ? match.scorers : [];
+                const homeScorers = matchScorers.filter(
+                  (s) => s.teamId === match.homeId
+                );
+                const awayScorers = matchScorers.filter(
+                  (s) => s.teamId === match.awayId
+                );
 
                 return (
                   <div
@@ -894,56 +1048,98 @@ export default function App() {
                             className="inline-flex items-center gap-1 rounded-lg bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-700 hover:bg-blue-100"
                           >
                             <Edit3 className="h-3.5 w-3.5" />
-                            <span>تعديل النتيجة</span>
+                            <span>تعديل النتيجة والهدافين</span>
                           </button>
                         )}
                       </div>
                     </div>
 
                     {!isEditing ? (
-                      <div className="mt-3 flex flex-col items-center justify-between gap-4 sm:flex-row">
-                        <div className="flex w-full items-center justify-between sm:w-2/5 sm:justify-start">
-                          {renderTeamBadge(homeTeam, match.homeLabel || "سيُحدد")}
-                          {(match.homeYellow > 0 || match.homeRed > 0) && (
-                            <div className="flex items-center gap-1 text-xs">
-                              {match.homeYellow > 0 && (
-                                <span className="rounded bg-amber-300 px-1.5 py-0.5 font-bold text-slate-900">
-                                  {match.homeYellow}🟨
-                                </span>
-                              )}
-                              {match.homeRed > 0 && (
-                                <span className="rounded bg-rose-600 px-1.5 py-0.5 font-bold text-white">
-                                  {match.homeRed}🟥
-                                </span>
-                              )}
-                            </div>
-                          )}
+                      <>
+                        <div className="mt-3 flex flex-col items-center justify-between gap-4 sm:flex-row">
+                          <div className="flex w-full items-center justify-between sm:w-2/5 sm:justify-start">
+                            {renderTeamBadge(homeTeam, match.homeLabel || "سيُحدد")}
+                            {(match.homeYellow > 0 || match.homeRed > 0) && (
+                              <div className="flex items-center gap-1 text-xs">
+                                {match.homeYellow > 0 && (
+                                  <span className="rounded bg-amber-300 px-1.5 py-0.5 font-bold text-slate-900">
+                                    {match.homeYellow}🟨
+                                  </span>
+                                )}
+                                {match.homeRed > 0 && (
+                                  <span className="rounded bg-rose-600 px-1.5 py-0.5 font-bold text-white">
+                                    {match.homeRed}🟥
+                                  </span>
+                                )}
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="flex items-center justify-center gap-3 rounded-xl bg-slate-900 px-5 py-2 text-lg font-extrabold text-white">
+                            <span>{match.homeScore ?? "-"}</span>
+                            <span className="text-slate-400">:</span>
+                            <span>{match.awayScore ?? "-"}</span>
+                          </div>
+
+                          <div className="flex w-full items-center justify-between sm:w-2/5 sm:justify-end">
+                            {(match.awayYellow > 0 || match.awayRed > 0) && (
+                              <div className="mr-2 flex items-center gap-1 text-xs">
+                                {match.awayYellow > 0 && (
+                                  <span className="rounded bg-amber-300 px-1.5 py-0.5 font-bold text-slate-900">
+                                    {match.awayYellow}🟨
+                                  </span>
+                                )}
+                                {match.awayRed > 0 && (
+                                  <span className="rounded bg-rose-600 px-1.5 py-0.5 font-bold text-white">
+                                    {match.awayRed}🟥
+                                  </span>
+                                )}
+                              </div>
+                            )}
+                            {renderTeamBadge(awayTeam, match.awayLabel || "سيُحدد")}
+                          </div>
                         </div>
 
-                        <div className="flex items-center justify-center gap-3 rounded-xl bg-slate-900 px-5 py-2 text-lg font-extrabold text-white">
-                          <span>{match.homeScore ?? "-"}</span>
-                          <span className="text-slate-400">:</span>
-                          <span>{match.awayScore ?? "-"}</span>
-                        </div>
-
-                        <div className="flex w-full items-center justify-between sm:w-2/5 sm:justify-end">
-                          {(match.awayYellow > 0 || match.awayRed > 0) && (
-                            <div className="mr-2 flex items-center gap-1 text-xs">
-                              {match.awayYellow > 0 && (
-                                <span className="rounded bg-amber-300 px-1.5 py-0.5 font-bold text-slate-900">
-                                  {match.awayYellow}🟨
-                                </span>
-                              )}
-                              {match.awayRed > 0 && (
-                                <span className="rounded bg-rose-600 px-1.5 py-0.5 font-bold text-white">
-                                  {match.awayRed}🟥
-                                </span>
+                        {matchScorers.length > 0 && (
+                          <div className="mt-3 grid grid-cols-1 gap-2 border-t border-slate-100 pt-2.5 text-xs sm:grid-cols-2">
+                            <div className="flex flex-wrap items-center gap-1.5">
+                              {homeScorers.length > 0 && (
+                                <>
+                                  <span className="font-bold text-slate-500">
+                                    أهداف {homeTeam?.name}:
+                                  </span>
+                                  {homeScorers.map((sc) => (
+                                    <span
+                                      key={sc.id}
+                                      className="rounded-md bg-blue-50 px-2 py-0.5 font-semibold text-blue-800 border border-blue-100"
+                                    >
+                                      ⚽ {sc.playerName}
+                                    </span>
+                                  ))}
+                                </>
                               )}
                             </div>
-                          )}
-                          {renderTeamBadge(awayTeam, match.awayLabel || "سيُحدد")}
-                        </div>
-                      </div>
+
+                            <div className="flex flex-wrap items-center gap-1.5 sm:justify-end">
+                              {awayScorers.length > 0 && (
+                                <>
+                                  <span className="font-bold text-slate-500">
+                                    أهداف {awayTeam?.name}:
+                                  </span>
+                                  {awayScorers.map((sc) => (
+                                    <span
+                                      key={sc.id}
+                                      className="rounded-md bg-emerald-50 px-2 py-0.5 font-semibold text-emerald-800 border border-emerald-100"
+                                    >
+                                      ⚽ {sc.playerName}
+                                    </span>
+                                  ))}
+                                </>
+                              )}
+                            </div>
+                          </div>
+                        )}
+                      </>
                     ) : (
                       <div className="mt-4 space-y-4 rounded-xl bg-slate-50 p-4 border border-slate-200">
                         {match.group === "KO" && (
@@ -1055,6 +1251,92 @@ export default function App() {
                               </button>
                             </div>
                           </div>
+                        </div>
+
+                        {/* قسم تسجيل مسجلي الأهداف */}
+                        <div className="rounded-xl border border-slate-200 bg-white p-3.5 space-y-3">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-extrabold text-slate-800">
+                              ⚽ مسجّلو الأهداف في المباراة
+                            </span>
+                            <span className="text-[11px] text-slate-500">
+                              إضافة هدف تزود نتيجة الفريق تلقائياً (+1)
+                            </span>
+                          </div>
+
+                          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                            <select
+                              value={scorerTeamId}
+                              onChange={(e) => {
+                                const tid = e.target.value;
+                                setScorerTeamId(tid);
+                                const firstP = cleanPlayerName(
+                                  getTeam(tid)?.players?.[0] || ""
+                                );
+                                setScorerPlayerName(firstP);
+                              }}
+                              className="rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-xs font-bold text-slate-800"
+                            >
+                              <option value="">اختر الفريق</option>
+                              {activeDraftTeams.map((t) => (
+                                <option key={t.id} value={t.id}>
+                                  {t.name}
+                                </option>
+                              ))}
+                            </select>
+
+                            <select
+                              value={scorerPlayerName}
+                              onChange={(e) => setScorerPlayerName(e.target.value)}
+                              className="rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-xs font-bold text-slate-800"
+                            >
+                              <option value="">اختر اللاعب</option>
+                              {(getTeam(scorerTeamId)?.players || []).map((pl, i) => {
+                                const clean = cleanPlayerName(pl);
+                                return (
+                                  <option key={i} value={clean}>
+                                    {clean}
+                                  </option>
+                                );
+                              })}
+                            </select>
+
+                            <button
+                              type="button"
+                              onClick={() => handleAddScorer(true)}
+                              className="inline-flex items-center justify-center gap-1 rounded-lg bg-blue-600 px-3 py-2 text-xs font-bold text-white hover:bg-blue-700"
+                            >
+                              <Plus className="h-3.5 w-3.5" />
+                              <span>إضافة هدف</span>
+                            </button>
+                          </div>
+
+                          {(matchDraft.scorers || []).length > 0 && (
+                            <div className="flex flex-wrap gap-2 pt-1">
+                              {(matchDraft.scorers || []).map((sc) => {
+                                const tObj = getTeam(sc.teamId);
+                                return (
+                                  <span
+                                    key={sc.id}
+                                    className="inline-flex items-center gap-1.5 rounded-lg bg-slate-100 px-2.5 py-1 text-xs font-bold text-slate-800 border border-slate-200"
+                                  >
+                                    <span>⚽ {sc.playerName}</span>
+                                    <span className="text-[11px] text-slate-500">
+                                      ({tObj?.name || sc.teamId})
+                                    </span>
+                                    <button
+                                      type="button"
+                                      onClick={() => handleRemoveScorer(sc.id, true)}
+                                      className="text-rose-600 hover:text-rose-800"
+                                      title="حذف الهدف"
+                                    >
+                                      <Trash2 className="h-3.5 w-3.5" />
+                                    </button>
+                                  </span>
+                                );
+                              })}
+                            </div>
+                          )}
                         </div>
 
                         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -1251,32 +1533,108 @@ export default function App() {
           </div>
         )}
 
+        {activeTab === "scorers" && (
+          <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+            <div className="border-b border-slate-200 bg-slate-50 px-5 py-3.5 flex items-center justify-between">
+              <h2 className="font-extrabold text-slate-900">
+                جدول هدافي البطولة
+              </h2>
+              <span className="text-xs font-semibold text-slate-500">
+                يُحدّث تلقائياً عند تسجيل الأهداف في المباريات
+              </span>
+            </div>
+
+            {topScorers.length === 0 ? (
+              <div className="p-8 text-center text-sm text-slate-500">
+                لم يتم تسجيل أهداف للاعبين حتى الآن. عند تعديل أي مباراة وإضافة مسجّلي الأهداف سيظهر الترتيب هنا مباشرة.
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-right text-xs sm:text-sm">
+                  <thead className="bg-slate-100/80 text-slate-600">
+                    <tr>
+                      <th className="px-4 py-2.5 font-bold">#</th>
+                      <th className="px-4 py-2.5 font-bold">اللاعب</th>
+                      <th className="px-4 py-2.5 font-bold">الفريق</th>
+                      <th className="px-4 py-2.5 text-center font-extrabold text-blue-700">
+                        الأهداف
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {topScorers.map((sc, idx) => (
+                      <tr key={sc.key} className={idx === 0 ? "bg-amber-50/50" : ""}>
+                        <td className="px-4 py-3 font-bold text-slate-700">
+                          {idx + 1}
+                        </td>
+                        <td className="px-4 py-3 font-bold text-slate-900">
+                          {sc.playerName}
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className="inline-flex items-center gap-2">
+                            <span
+                              className="h-3 w-3 rounded-full"
+                              style={{ backgroundColor: sc.teamColor }}
+                            />
+                            <span className="font-semibold text-slate-700">
+                              {sc.teamName}
+                            </span>
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-center">
+                          <span className="inline-flex items-center justify-center rounded-full bg-blue-600 px-3 py-0.5 text-xs font-extrabold text-white">
+                            {sc.goals} ⚽
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
+
         {activeTab === "teams" && (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {teams.map((team) => (
-              <div
-                key={team.id}
-                className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
-              >
-                <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                  {renderTeamBadge(team)}
-                  <span className="rounded-md bg-slate-100 px-2 py-0.5 text-xs font-bold text-slate-600">
-                    Group {team.group}
-                  </span>
+            {teams.map((team) => {
+              const teamScorers = topScorers.filter((s) => s.teamId === team.id);
+              return (
+                <div
+                  key={team.id}
+                  className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+                >
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                    {renderTeamBadge(team)}
+                    <span className="rounded-md bg-slate-100 px-2 py-0.5 text-xs font-bold text-slate-600">
+                      Group {team.group}
+                    </span>
+                  </div>
+                  <ul className="mt-3 space-y-1.5 text-xs text-slate-700">
+                    {team.players.map((p, i) => {
+                      const clean = cleanPlayerName(p);
+                      const playerGoals =
+                        teamScorers.find((ts) => ts.playerName === clean)?.goals || 0;
+                      return (
+                        <li
+                          key={i}
+                          className="flex items-center justify-between rounded-lg bg-slate-50 px-2.5 py-1.5"
+                        >
+                          <span>{p}</span>
+                          {playerGoals > 0 ? (
+                            <span className="rounded-md bg-emerald-100 px-2 py-0.5 text-[11px] font-bold text-emerald-800">
+                              {playerGoals} ⚽
+                            </span>
+                          ) : (
+                            <span className="text-slate-400">#{i + 1}</span>
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ul>
                 </div>
-                <ul className="mt-3 space-y-1.5 text-xs text-slate-700">
-                  {team.players.map((p, i) => (
-                    <li
-                      key={i}
-                      className="flex items-center justify-between rounded-lg bg-slate-50 px-2.5 py-1.5"
-                    >
-                      <span>{p}</span>
-                      <span className="text-slate-400">#{i + 1}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
 
